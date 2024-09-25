@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.veterinarydiagnosticcomplex.presentation.screen.auth.AuthScreen
 import com.example.veterinarydiagnosticcomplex.presentation.screen.pet.PetScreen
+import com.example.veterinarydiagnosticcomplex.presentation.screen.settings.SettingsScreen
 
 @Composable
 fun RootNavGraph(
@@ -24,13 +25,13 @@ fun RootNavGraph(
             AuthScreen(modifier, navController = navController)
         }
         composable(route = Screen.Pet.route) {
-            PetScreen(modifier)
+            PetScreen(modifier = modifier, navController =  navController)
         }
         composable(route = Screen.Details.route) {
             Text(modifier = modifier, text = "Details")
         }
         composable(route = Screen.Settings.route) {
-            Text(modifier = modifier, text = "Settings")
+            SettingsScreen(modifier)
         }
     }
 }

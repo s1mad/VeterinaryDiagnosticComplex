@@ -3,7 +3,9 @@ package com.example.veterinarydiagnosticcomplex.presentation.screen.pet
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,35 +17,40 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
+import com.example.veterinarydiagnosticcomplex.navigation.Screen
 import com.example.veterinarydiagnosticcomplex.presentation.screen.pet.component.BasePetParamRow
 import com.example.veterinarydiagnosticcomplex.presentation.screen.pet.component.ChoosePetDialog
+import com.example.veterinarydiagnosticcomplex.presentation.screen.pet.component.ConfirmExitDialog
 import com.example.veterinarydiagnosticcomplex.presentation.screen.pet.component.Pet
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PetScreen(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     shape: CornerBasedShape = MaterialTheme.shapes.medium,
 ) {
     val showChoosePetDialog = rememberSaveable { mutableStateOf(false) }
+    val showConfirmExitDialog = rememberSaveable { mutableStateOf(false) }
 
     // TODO Получение pet с сервака
     val pet = Pet(
@@ -143,16 +150,39 @@ fun PetScreen(
             BasePetParamRow("Частота дыхания:", "12.15")
         }
         Spacer(Modifier.weight(1f))
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = shape,
-            onClick = {
-                showChoosePetDialog.value = true
-            }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(text = "Изменить питомца", style = MaterialTheme.typography.titleLarge)
+            Box(
+                modifier = Modifier
+                    .height(56.dp)
+                    .width(96.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.secondary,
+                        shape = shape
+                    )
+                    .clickable {
+                        showConfirmExitDialog.value = true
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
+                    contentDescription = "ExitToAccount",
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = shape,
+                onClick = {
+                    showChoosePetDialog.value = true
+                }
+            ) {
+                Text(text = "Изменить питомца", style = MaterialTheme.typography.titleLarge)
+            }
         }
     }
 
@@ -166,6 +196,18 @@ fun PetScreen(
             },
             hideDialog = {
                 showChoosePetDialog.value = false
+            }
+        )
+    }
+    if (showConfirmExitDialog.value) {
+        ConfirmExitDialog(
+            onDismissRequest = {
+                showConfirmExitDialog.value = false
+            },
+            onConfirmRequest = {
+                // TODO
+                navController.navigate(Screen.Auth.route)
+                showConfirmExitDialog.value = false
             }
         )
     }
